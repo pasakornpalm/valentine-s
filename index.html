@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Quiz ( Pang ❤️)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500&display=swap');
+        
+        body {
+            font-family: 'Prompt', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #ffe6e6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: #ff4d4d;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+        .music-control:hover {
+            transform: scale(1.1);
+        }
+        .music-icon {
+            color: white;
+            font-size: 20px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            max-width: 90%;
+            width: 500px;
+            text-align: center;
+            margin: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        .sparkle {
+            position: absolute;
+            pointer-events: none;
+            animation: sparkleAnimation 2s linear infinite;
+        }
+        @keyframes sparkleAnimation {
+            0% { transform: scale(0) rotate(0deg); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: scale(1.5) rotate(180deg); opacity: 0; }
+        }
+        .section {
+            display: none;
+            animation: fadeIn 0.5s;
+            position: relative;
+        }
+        .section.active {
+            display: block;
+        }
+        .heart {
+            color: #ff4d4d;
+            font-size: 40px;
+            margin-bottom: 20px;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        h1 {
+            color: #ff4d4d;
+            margin-bottom: 20px;
+            font-size: 24px;
+            position: relative;
+            display: inline-block;
+        }
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff4d4d, transparent);
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #333;
+            padding: 0 10px;
+            transform: translateY(0);
+            transition: transform 0.3s;
+        }
+        .question:hover {
+            transform: translateY(-5px);
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ffb3b3;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: 'Prompt', sans-serif;
+            transition: all 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #ff4d4d;
+            box-shadow: 0 0 10px rgba(255,77,77,0.2);
+            transform: scale(1.02);
+        }
+        button {
+            background: linear-gradient(45deg, #ff4d4d, #ff6b6b);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+            font-family: 'Prompt', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+        button:hover::after {
+            left: 100%;
+        }
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255,77,77,0.3);
+        }
+        .error {
+            color: #ff4d4d;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .success-message {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #ff4d4d;
+            margin: 20px 0;
+            animation: rainbow 5s infinite;
+        }
+        @keyframes rainbow {
+            0% { color: #ff4d4d; }
+            25% { color: #ff6b6b; }
+            50% { color: #ff8585; }
+            75% { color: #ff6b6b; }
+            100% { color: #ff4d4d; }
+        }
+        .love-quotes {
+            display: none;
+            margin: 20px 0;
+        }
+        .quote {
+            margin: 10px 0;
+            padding: 15px;
+            background: #fff5f5;
+            border-radius: 10px;
+            transform: translateY(0);
+            transition: transform 0.3s;
+            animation: fadeInUp 0.5s forwards;
+            opacity: 0;
+        }
+        .quote:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(255,77,77,0.1);
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .floating-heart {
+            position: fixed;
+            animation: floatUp 2s ease-out forwards;
+            font-size: 30px;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg) scale(0);
+                opacity: 0;
+            }
+        }
+        
+        /* เพิ่ม Animation พิเศษสำหรับหน้าสุดท้าย */
+        .celebration {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            animation: confetti-fall 3s linear infinite;
+        }
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100%) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 20px;
+            }
+            .question {
+                font-size: 16px;
+            }
+            input[type="text"] {
+                width: 90%;
+                font-size: 14px;
+            }
+            button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+            .music-control {
+                top: 10px;
+                right: 10px;
+                width: 35px;
+                height: 35px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="music-control" onclick="toggleMusic()">
+        <div class="music-icon">♪</div>
+    </div>
+    
+    <audio id="bgMusic" loop>
+        <source src="https://cdnjs.cloudflare.com/ajax/libs/tiny-audio/0.1.0/valentine.mp3" type="audio/mp3">
+    </audio>
+
+    <div class="container">
+        <div class="section active" id="section1">
+            <div class="heart">❤️ แป้ง</div>
+            <h1>บททดสอบความรัก</h1>
+            <div class="question">คำถามแรก : วันวาเลนไทน์ตรงกับวันที่เท่าไหร่ ?</div>
+            <input type="text" id="answer1" placeholder="พิมพ์คำตอบของคุณ..." autocomplete="off">
+            <div class="error" id="error1">ยังไม่ถูกต้องนะคะ ลองใหม่อีกครั้ง ❤️</div>
+            <button onclick="checkAnswer(1)">ส่งคำตอบ</button>
+        </div>
+
+        <div class="section" id="section2">
+            <div class="heart">💝</div>
+            <h1>คำถามที่ 2</h1>
+            <div class="question">วันครบรอบคือวันที่เท่าไหร่ ?</div>
+            <input type="text" id="answer2" placeholder="พิมพ์คำตอบของคุณ..." autocomplete="off">
+            <div class="error" id="error2">ยังไม่ถูกต้องนะคะ ลองใหม่อีกครั้ง ❤️</div>
+            <button onclick="checkAnswer(2)">ส่งคำตอบ</button>
+        </div>
+
+        <div class="section" id="section3">
+            <div class="heart">💖</div>
+            <h1>คำถามสุดท้าย</h1>
+            <div class="question">วันแรกที่เราไปด้วยกันชื่อว่าวัดอะไร ?</div>
+            <input type="text" id="answer3" placeholder="พิมพ์คำตอบของคุณ..." autocomplete="off">
+            <div class="error" id="error3">ยังไม่ถูกต้องนะคะ ลองใหม่อีกครั้ง ❤️</div>
+            <button onclick="checkAnswer(3)">ส่งคำตอบ</button>
+        </div>
+
+        <div class="section" id="success">
+            <div class="heart">💕</div>
+            <h1>ยอดเยี่ยมมาก!</h1>
+            <div class="success-message">
+                คุณตอบถูกทุกข้อแล้ว! ขอให้ความรักของคุณงดงามเสมอ
+            </div>
+            <div class="love-quotes">
+                <div class="quote">💝 สุขสันต์วันวาเลนไทน์นะคะ ขอให้วันนี้เต็มไปด้วยความรักและความสุขเสมอ</div>
+                <div class="quote">💕 บางครั้งคำว่า "รัก" อาจเรียบง่าย แต่ความรู้สึกของฉันที่มีให้เธอช่างยิ่งใหญ่เหลือเกิน</div>
+                <div class="quote">❤️ ขอบคุณที่ทำให้ทุกวันของฉันเต็มไปด้วยรอยยิ้มและความอบอุ่น รักเธอมากจริงๆ</div>
+                <div class="quote">💖 แม้ไม่มีของขวัญล้ำค่า แต่สิ่งที่ฉันอยากมอบให้คือหัวใจที่รักและอยู่ข้างเธอตลอดไป</div>
+                <div class="quote">💗 ขอให้ทุกวันที่เรามีร่วมกันเปี่ยมไปด้วยความรัก ความเข้าใจ และความสุขที่ไม่มีวันจางหาย</div>
+            </div>
+            <div class="celebration"></div>
+        </div>
+    </div>
+
+    <script>
+        let musicPlaying = false;
+        const audio = document.getElementById('bgMusic');
+        const correctAnswers = {
+            1: ['14', '14 กุมภาพันธ์', '14 february', '14 feb'],
+            2: ['15','ทุกวันที่ 15 ของเดือน'],
+            3: ['วัดน้อยสุวรรณาราม', 'วัดคลองเก้า', 'วัดตำหรุ']
+        };
+
+        function toggleMusic() {
+            if (musicPlaying) {
+                audio.pause();
+                document.querySelector('.music-icon').textContent = '♪';
+            } else {
+                audio.play();
+                document.querySelector('.music-icon').textContent = '♫';
+            }
+            musicPlaying = !musicPlaying;
+        }
+
+        function createSparkle() {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.left = Math.random() * 100 + '%';
+            sparkle.style.top = Math.random() * 100 + '%';
+            sparkle.innerHTML = '✨';
+            document.querySelector('.container').appendChild(sparkle);
+            
+            setTimeout(() => sparkle.remove(), 2000);
+        }
+
+        function createFloatingHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'floating-heart';
+            heart.style.left = Math.random() * 100 + '%';
+            heart.innerHTML = ['❤️', '💖', '💕', '💗', '💝'][Math.floor(Math.random() * 5)];
+            document.querySelector('.floating-hearts-container').appendChild(heart);
+            
+            setTimeout(() => heart.remove(), 4000);
+        }
+
+        function createConfetti() {
+            const colors = ['#ff4d4d', '#ff6b6b', '#ff8585', '#ffb3b3', '#ffe6e6'];
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            document.querySelector('.celebration').appendChild(confetti);
+            
+            setTimeout(() => confetti.remove(), 3000);
+        }
+
+        function showSection(sectionNumber) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(`section${sectionNumber}`).classList.add('active');
+        }
+
+        function checkAnswer(questionNumber) {
+            const userAnswer = document.getElementById(`answer${questionNumber}`).value.toLowerCase().trim();
+            const error = document.getElementById(`error${questionNumber}`);
+            
+            if (correctAnswers[questionNumber].includes(userAnswer)) {
+                error.style.display = 'none';
+                createSparkle();
+                
+                if (questionNumber === 3) {
+                    showSuccess();
+                } else {
+                    showSection(questionNumber + 1);
+                }
+            } else {
+                error.style.display = 'block';
+                error.style.animation = 'none';
+                setTimeout(() => error.style.animation = 'shake 0.5s', 10);
+            }
+        }
+
+        function showSuccess() {
+            document.getElementById('success').classList.add('active');
+            document.querySelectorAll('.section').forEach(section => {
+                if (section.id !== 'success') {
+                    section.classList.remove('active');
+                }
+            });
+            
+            // Show quotes with delay
+            const quotes = document.querySelector('.love-quotes');
+            quotes.style.display = 'block';
+            quotes.querySelectorAll('.quote').forEach((quote, index) => {
+                setTimeout(() => {
+                    quote.style.opacity = '1';
+                }, index * 500);
+            });
+            
+            // Start celebration effects
+            setInterval(createConfetti, 300);
+            setInterval(createFloatingHeart, 500);
+        }
+
+        // Add floating hearts container
+        const heartsContainer = document.createElement('div');
+        heartsContainer.className = 'floating-hearts-container';
+        document.body.appendChild(heartsContainer);
+
+        // Create sparkles periodically
+        setInterval(createSparkle, 2000);
+    </script>
+
+</body>
+</html>
